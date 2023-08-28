@@ -1,0 +1,51 @@
+<div class="container">
+    {{ if .Msgs  }}
+    {{ range .Msgs }}
+    <div class="alert alert-{{ .Type }} my-3 alert-dismissible fade show" role="alert">
+        {{ .Text }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
+    {{ end }}
+    
+    <!-- ->
+    <button class="btn btn-danger btn-lg mt-3" hx-get="/add-item/nonexistent" hx-target="#content">Test error</button>
+    <!-- -->
+
+    <ul class="list-group mt-3">
+        <li class="list-group-item active"><div class="fw-bold">Current user information</div></li>
+        <li class="list-group-item">
+            <div class="fw-bold">Username: </div>
+            {{ .User.Username }}
+        </li>
+        <li class="list-group-item">
+            <div class="fw-bold">User ID: </div>
+            {{ .User.ID }}
+        </li>
+        <li class="list-group-item">
+            <div class="fw-bold">Default database ID: </div>
+            {{ .User.DefaultDatabase }}
+        </li>
+        <li class="list-group-item">
+            <div class="fw-bold">Collections: </div>
+            {{ range .User.Collections }}
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item list-group-item-secondary">
+                    <div class="fw-bold">Label: </div>
+                    {{ .Label }}
+                </li>
+                <li class="list-group-item">
+                    <div class="fw-bold">Internal name: </div>
+                    {{ .Name }}
+                </li>
+                <li class="list-group-item">
+                    <div class="fw-bold">Database: </div>
+                    {{ .Database }}
+                </li>
+            </ul>
+            {{ end }}
+        </li>
+
+    </ul>
+
+</div>

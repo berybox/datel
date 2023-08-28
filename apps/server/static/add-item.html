@@ -1,0 +1,39 @@
+<div class="container">
+    {{ if .Msgs  }}
+    {{ range .Msgs }}
+    <div class="alert alert-{{ .Type }} my-3 alert-dismissible fade show" role="alert">
+        {{ .Text }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
+    {{ end }}
+
+    <h2 class="mt-3">{{ .Title }}</h2>
+    <form name="item" hx-post="/add-item/{{ .Item.Collection.Name }}{{ if .Item.ID }}/{{ .Item.ID }}{{ end }}" hx-encoding="multipart/form-data" hx-target="#content">
+        {{ if .Item.ID }}
+        <input type="hidden" name="_id" id="_id" value="{{ .Item.ID }}">
+        {{ end }}
+
+        {{ range .Item.Data }}                
+
+        {{/* Text field */}}
+        {{ if eq .Field.Type.Name "text" }}                
+        <div class="form-floating mt-3">
+            <input type="text" class="form-control" id="{{ .Field.Key }}" name="{{ .Field.Key }}" placeholder="" {{ if .Value }}value="{{ .Value }}"{{ end }}>
+            <label for="{{ .Field.Key }}">{{ .Field.Label }}</label>
+        </div>
+
+        {{/* Numeric field */}}
+        {{ else if eq .Field.Type.Name "number" }}                
+        <div class="form-floating mt-3">
+            <input type="number" class="form-control" id="{{ .Field.Key }}" name="{{ .Field.Key }}" min="{{ index .Field.Type.Properties "min" }}" max="{{ index .Field.Type.Properties "max" }}" placeholder="" {{ if .Value }}value="{{ .Value }}"{{ end }}>
+            <label for="{{ .Field.Key }}">{{ .Field.Label }}</label>
+        </div>
+        
+        
+        {{ end }}
+        {{ end }}
+
+        <button type="submit" class="btn btn-primary btn-lg mt-3 float-end">Save</button>
+    </form>
+</div>

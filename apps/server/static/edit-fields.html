@@ -1,0 +1,61 @@
+<div class="container">   
+    {{ if .Msgs  }}
+    {{ range .Msgs }}
+    <div class="alert alert-{{ .Type }} my-3 alert-dismissible fade show" role="alert">
+        {{ .Text }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
+    {{ end }}
+    
+    <h2 class="my-3">{{ .Title }}</h2>
+
+    {{ $database := .Collection.Database }}
+    {{ $collectionName := .Collection.Name }}
+    <form id="field-list" class="list-group" name="fileds" hx-post="/edit-fields/{{ $collectionName }}" hx-ext='json-enc' hx-target="#content">
+        {{ range $i, $field := .Collection.Fields }}
+        
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <img src="/static/img/arrows-move.svg" role="button" class="bi-arrows-move m-2" alt="trash" width="24" height="24">
+            <span>
+                <input type="text" id="{{ $field.Key }}" name="{{ $field.Key }}" class="form-control-plaintext" value="{{ $field.Label }}"  readonly>
+            </span>
+            <span>
+                {{ if ne $database "datel" }} 
+                <button class="btn" type="button" hx-get="/add-field/{{ $collectionName }}/{{ $field.Key }}" hx-target="#content" hx-swap="innerHTML">
+                    <img src="/static/img/pencil.svg" alt="trash" width="24" height="24">
+                </button>
+                <button class="btn" type="button" onclick="removeItem('{{ .Key }}')">
+                    <img src="/static/img/trash.svg" alt="trash" width="24" height="24">
+                </button>   
+                {{ end }}
+            </span>
+        </div>
+
+        {{ end }}
+
+        <div>
+            <button type="submit" class="btn btn-primary btn-lg mt-3 float-end">Save</button>
+        </div>
+
+    </form>
+    <script>
+        function runSortable() {
+            Sortable.create(document.getElementById("field-list"), {
+                handle: '.bi-arrows-move',
+                animation: 150
+            });
+        }
+        function removeItem(key) {
+            let elementToRemove = document.getElementById(key);
+            if (elementToRemove) {
+                let parentToRemove = elementToRemove.closest('.list-group-item');
+                if (parentToRemove) {
+                    parentToRemove.remove();
+                }
+            }
+        }
+    </script>
+    <script src="/static/js/sortable.min.js" onload="runSortable()"></script>
+
+</div>

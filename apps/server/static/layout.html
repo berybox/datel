@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"> <!-- data-bs-theme="dark"> -->
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="icon" type="image/x-icon" href="/static/img/logo-blue.ico">
+
+    <style>
+        .invert-color {
+            filter:  brightness(0) invert(1);
+        }
+
+        .navbar-logo {
+            display: flex;
+            align-items: flex-end;
+        }
+    </style>
+
+    <title>Datel</title>
+  </head>
+  <body>
+    <!-- Header of the page + button to toggle menu --> 
+    <nav class="navbar bg-primary navbar-dark">
+        <div class="container">
+            <span class="navbar-brand navbar-logo">
+                <a href="/"><img src="/static/img/logo-white.svg" height="32" width="64"></a>
+            </span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+            
+    <div class="container-fluid">
+
+        <!-- Offcanvas menu -->
+        <!----> <div class="offcanvas offcanvas-start" id="sidebar"><!---->
+        <!-- <div class="col-3" id="sidebar"> -->
+            <div class="offcanvas-header">
+                <!-- Header of offcanvas menu -->
+                <div class="offcanvas-title">
+                    <h3>Datel</h3>
+                    <var>Logged in as: {{ .Username }}</var>
+                </div>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="container-fluid">
+                    <div class="d-grid gap-2">
+                        <!-- Items of menu -->                        
+
+                        <!-- Main menu -->
+                        <ul class="list-group list-group-flush mt-3">
+                            <ul class="list-group list-group-flush mt-3">
+                                <li class="list-group-item active">Menu</li>
+                                <button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="offcanvas" hx-get="/" hx-target="#content">Home</button>
+                                <button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="offcanvas" hx-get="/add-collection" hx-target="#content">Add collection</button>
+                            </ul>                            
+                        </ul>
+
+                        <!-- Individual collections from the backend -->
+                        {{ range .Menu }}
+                        <ul class="list-group list-group-flush mt-3">
+                            <li class="list-group-item active d-flex justify-content-between align-items-center">
+                                {{ .Label }}
+                                {{ if ne .DeleteURL "" }}
+                                <a href="{{ .DeleteURL }}" onclick="return confirm('Really delete collection: {{ .Label }}?');"><button class="btn btn-primary"><img src="/static/img/trash.svg" class="invert-color" height="16" width="16"></button></a>
+                                {{ end }}
+                            </li>
+                            {{ range .Items}}
+                            <button type="button" class="list-group-item list-group-item-action" data-bs-dismiss="offcanvas" hx-get="{{ .URL }}" hx-target="#content">{{ .Label }}</button>                            
+                            {{ end }}
+                        </ul>
+                        {{ end }}
+                    </div>    
+                </div>
+            </div>
+        </div>
+
+        <div class="" id="content">
+            {{ embed }}
+        </div>
+    </div>
+
+
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/htmx.min.js"></script>
+    <script>
+        htmx.defineExtension('json-enc', {
+            onEvent: function (name, evt) {
+                if (name === "htmx:configRequest") {
+                    evt.detail.headers['Content-Type'] = "application/json";
+                }
+            },
+            
+            encodeParameters : function(xhr, parameters, elt) {
+                xhr.overrideMimeType('text/json');
+                return (JSON.stringify(parameters));
+            }
+        });
+
+
+        
+    </script>
+
+    {{ if .HTMLState }}
+    <script>
+        history.pushState({}, "", "{{ .HTMLState.URL }}");
+    </script>
+    {{ end }}
+
+  </body>
+</html>

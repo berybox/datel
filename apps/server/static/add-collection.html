@@ -1,0 +1,31 @@
+<div class="container">
+    {{ if .Msgs  }}
+    {{ range .Msgs }}
+    <div class="alert alert-{{ .Type }} my-3 alert-dismissible fade show" role="alert">
+        {{ .Text }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {{ end }}
+    {{ end }}
+
+    <h2 class="mt-3">{{ .Title }}</h2>
+    <form name="item" action="/add-collection" method="post" enctype="multipart/form-data">
+           
+        <div class="form-floating mt-3">
+            <input type="text" class="form-control" id="collection-name" name="collection-name" placeholder="" required pattern="\S+">
+            <label for="collection-name">Internal name of collection (unique)</label>
+        </div>
+        <div class="form-floating mt-3">
+            <input type="text" class="form-control" id="collection-label" name="collection-label" placeholder="" required>
+            <label for="collection-label">Label of collection to be shown</label>
+        </div>
+        <div class="form-floating mt-3">
+            <input type="text" class="form-control"  placeholder="" value="{{ .User.DefaultDatabase }}" disabled>
+            <input type="hidden" id="collection-database" name="collection-database" value="{{ .User.DefaultDatabase }}">
+            <label for="collection-database">Database name</label>
+        </div>
+        
+
+        <button type="submit" class="btn btn-primary btn-lg mt-3 float-end">Save</button>
+    </form>
+</div>

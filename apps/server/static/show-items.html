@@ -1,0 +1,30 @@
+<div class="container">  
+    <h2 class="mt-3">{{ .Title }}</h2>
+    <div class="accordion accordion-flush" id="items-list">
+        {{ range $i, $item := .Items }}
+        <div class="accordion-item">
+            <h2 class="accordion-header d-flex align-items-center">
+                <button class="accordion-button collapsed py-2" type="button" data-bs-toggle="collapse" data-bs-target="#item-{{ $i }}">
+                    {{ $item.Label }}
+                </button>
+                {{ if ne $item.Collection.Database "datel" }} 
+                <button class="btn" type="button" hx-get="/add-item/{{ $item.Collection.Name }}/{{ $item.ID }}" hx-target="#content">
+                    <img src="/static/img/pencil.svg" alt="trash" width="16" height="16">
+                </button>               
+                {{ end }}
+                <button class="btn" type="button" hx-delete="/add-item/{{ $item.Collection.Name }}/{{ $item.ID }}" hx-target="#content" hx-confirm="Really delete item?">
+                    <img src="/static/img/trash.svg" alt="trash" width="16" height="16">
+                </button>
+            </h2>
+            
+            <div id="item-{{ $i }}" class="accordion-collapse collapse" data-bs-parent="#items-list">
+                <div class="accordion-body">
+                    {{ range $item.Data }}
+                    <p><strong>{{ .Field.Label }}:</strong> {{ .Value }}</p>
+                    {{ end }}
+                </div>
+            </div>
+        </div>    
+        {{ end }}
+    </div>
+</div>
