@@ -3,6 +3,7 @@ package handle
 import (
 	"fmt"
 
+	"github.com/berybox/datel/apps/server/fiberutils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -15,7 +16,8 @@ func ErrorGET(c *fiber.Ctx, err error) error {
 	}
 
 	m := fiber.Map{
-		"Text": fmt.Sprintf("%s", err),
+		"Text":   fmt.Sprintf("%s", err),
+		"UserID": fiberutils.GetUserID(c),
 	}
 
 	err = c.Render("error", m, "error")
