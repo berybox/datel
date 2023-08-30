@@ -25,7 +25,7 @@ var (
 type Item struct {
 	ID         string      `json:"_id" bson:"_id"`
 	Collection *Collection `json:"-" bson:"-"`
-	Label      string      `json:"label" bson:"label"`
+	Label      string      `json:"-" bson:"-"`
 	Data       []ItemData  `json:"data" bson:"data"`
 }
 
@@ -150,6 +150,31 @@ func (m *Instance) ReplaceItem(item Item) error {
 	filter := IDFilter(item.ID)
 
 	_, err := m.ReplaceOne(item.Collection.Database, item.Collection.Name, filter, item.toBSON())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateItem updates item in the collection. Existing fields are kept.
+func (m *Instance) UpdateItem(item Item) error {
+	filter := IDFilter(item.ID)
+
+	updateData, err := bson.Marshal(item)
+	if err != nil {
+		return err
+	}
+
+	var update bson.M
+	err = bson.Unmarshal(updateData, &update)
+	if err != nil {
+		return err
+	}
+
+	delete(update, "_id")
+
+	_, err = m.UpdateOne(item.Collection.Database, item.Collection.Name, filter, bson.M{"$set": item.toBSON()})
 	if err != nil {
 		return err
 	}

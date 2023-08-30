@@ -84,7 +84,8 @@ func AddItemUpdatePOST(c *fiber.Ctx) error {
 
 	item := mongodb.ItemFromMultipart(col, f)
 
-	err = db.ReplaceItem(item)
+	//err = db.ReplaceItem(item)
+	err = db.UpdateItem(item)
 	if err != nil {
 		return err
 	}
